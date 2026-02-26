@@ -84,7 +84,7 @@ jobs:
       - name: Move coverage file
         run: |
           mkdir -p tests/coverage_reports
-          mv tests/coverage_reports/coverage_unit_tests_report_${{ github.run_id }}.coverage tests/coverage_reports/unit_tests.coverage
+          mv unit_test.coverage tests/coverage_reports/unit_tests.coverage
 
       - name: Combine coverage and generate XML
         run: |
