@@ -23,9 +23,6 @@ jobs:
   tests:
     name: Run Unit Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
 
     steps:
       - uses: actions/checkout@v6
@@ -45,13 +42,13 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=. --cov-report=xml --cov-report=html --cov-report=term -v
+          COVERAGE_FILE=unit_test.coverage pytest --cov=. --cov-report=html --cov-report=term -v
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v6
         with:
           name: coverage_unit_tests_report_${{ matrix.python-version }}_${{ github.run_id }}.coverage
-          path: .coverage
+          path: unit_test.coverage
           retention-days: 30
 
   coverage:
