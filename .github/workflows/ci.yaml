@@ -132,11 +132,3 @@ jobs:
           name: coverage_combined_diff_report_${{ matrix.python-version }}_${{ github.run_id }}.html
           path: tests/coverage_reports/combined_diff.html
           retention-days: 30
-
-      - name: Deploy Coverage to GitHub Pages
-        if: github.event_name == 'pull_request'
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./tests/coverage_reports/
-          keep_files: false
