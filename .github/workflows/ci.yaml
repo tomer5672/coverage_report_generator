@@ -77,6 +77,10 @@ jobs:
           name: coverage_unit_tests_report_${{ github.run_id }}.coverage
           path: tests/coverage_reports/
 
+      - name: list dir
+        run: |
+          ls tests/coverage_reports/
+
       - name: Move coverage file
         run: |
           mkdir -p tests/coverage_reports
