@@ -77,7 +77,7 @@ jobs:
       - name: Download unit tests coverage report
         uses: actions/download-artifact@v7
         with:
-          name: coverage_unit_tests_report_${{ matrix.python-version }}_${{ github.run_id }}.coverage
+          name: coverage_unit_tests_report_${{ github.run_id }}.coverage
           path: tests/coverage_reports/
 
       - name: Move coverage file
