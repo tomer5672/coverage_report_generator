@@ -54,9 +54,6 @@ jobs:
   coverage:
     name: Full coverage
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
     needs: [tests]
     steps:
       - uses: actions/checkout@v6
