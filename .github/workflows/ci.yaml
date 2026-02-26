@@ -84,7 +84,7 @@ jobs:
       - name: Combine coverage and generate XML
         run: |
           cd tests/coverage_reports
-          coverage combine unit_tests.coverage
+          coverage combine unit_test.coverage
           coverage xml -o combined.xml
           cd ../..
 
