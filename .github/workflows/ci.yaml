@@ -93,7 +93,7 @@ jobs:
           diff-cover tests/coverage_reports/combined.xml \
             --compare-branch origin/development \
             --show-uncovered \
-            --html-report tests/coverage_reports/combined_diff.html
+            --html-report tests/coverage_reports/combined_diff.html \
             --markdown-report tests/coverage_reports/diff_coverage.md
 
       - name: Add coverage to job summary
