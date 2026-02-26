@@ -42,4 +42,3 @@ class TestMultiplyNumbers:
 
 # Note: divide_numbers and print_hi are NOT tested
 # This will show up as uncovered code in the coverage report
-
