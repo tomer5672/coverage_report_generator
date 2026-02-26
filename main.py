@@ -1,16 +1,31 @@
-# This is a sample Python script.
+def add_numbers(a, b):
+    """Add two numbers together.
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+    This function will be tested.
+    """
+    return a + b
+
+
+def multiply_numbers(a, b):
+    """Multiply two numbers together.
+
+    This function will be tested.
+    """
+    if a == 0 or b == 0:
+        return 0
+    return a * b
+
+
+def divide_numbers(a, b):
+    """Divide two numbers.
+
+    This function will NOT be tested.
+    """
+    if b == 0:
+        raise ValueError("Cannot divide by zero")
+    return a / b
 
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
