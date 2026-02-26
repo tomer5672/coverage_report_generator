@@ -99,19 +99,17 @@ jobs:
       - name: Add coverage to job summary
         if: github.event_name == 'pull_request'
         run: |
-          {
-            echo "## Diff Coverage Report"
-            echo
-            echo "<details>"
-            echo "<summary>Show diff-cover details</summary>"
-            echo
-            echo "```markdown"
-            cat tests/coverage_reports/diff_coverage.md
-            echo
-            echo "```"
-            echo
-            echo "</details>"
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo "## 📊 Diff Coverage Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "<details>" >> "$GITHUB_STEP_SUMMARY"
+          echo "<summary>Click to expand coverage details</summary>" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY" # Important: Empty line before content
+          
+          # Append the actual markdown table from diff-cover
+          cat tests/coverage_reports/diff_coverage.md >> "$GITHUB_STEP_SUMMARY"
+          
+          echo "" >> "$GITHUB_STEP_SUMMARY" # Important: Empty line after content
+          echo "</details>" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload markdown coverage report for PR comment
         if: github.event_name == 'pull_request'
