@@ -1,0 +1,5 @@
+pytest>=7.4
+pytest-cov>=4.1
+coverage>=7.4
+diff-cover>=9.0
+
