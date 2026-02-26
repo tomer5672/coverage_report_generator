@@ -54,9 +54,6 @@ jobs:
   coverage:
     name: Full coverage
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11"]
     needs: [tests]
     steps:
       - uses: actions/checkout@v6
@@ -83,7 +80,7 @@ jobs:
       - name: Move coverage file
         run: |
           mkdir -p tests/coverage_reports
-          mv tests/coverage_reports/.coverage tests/coverage_reports/unit_tests.coverage || true
+          mv tests/coverage_reports/coverage_unit_tests_report_${{ github.run_id }}.coverage tests/coverage_reports/unit_tests.coverage
 
       - name: Combine coverage and generate XML
         run: |
