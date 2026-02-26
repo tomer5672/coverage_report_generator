@@ -132,3 +132,11 @@ jobs:
           name: coverage_combined_diff_report_${{ matrix.python-version }}_${{ github.run_id }}.html
           path: tests/coverage_reports/combined_diff.html
           retention-days: 30
+
+      - name: Post Comment to PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          file_path: tests/coverage_reports/diff_coverage.md
+          comment_tag: coverage_report # This prevents duplicate comments if you push again
+          mode: recreate # Updates the existing comment instead of posting a new one
