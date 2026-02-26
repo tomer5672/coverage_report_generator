@@ -81,11 +81,6 @@ jobs:
         run: |
           ls tests/coverage_reports/
 
-      - name: Move coverage file
-        run: |
-          mkdir -p tests/coverage_reports
-          mv unit_test.coverage tests/coverage_reports/unit_tests.coverage
-
       - name: Combine coverage and generate XML
         run: |
           cd tests/coverage_reports
