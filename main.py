@@ -26,17 +26,17 @@ def divide_numbers(a, b):
     return a / b
 
 
-# def special_sum(x,y):
-#     result = x + y
-#     result *= 2
-#     return result
-#
-#
-# def is_even(n):
-#     """Check if a number is even."""
-#     n = int(n)
-#     remainder = n % 2
-#     return remainder == 0
+def special_sum(x,y):
+    result = x + y
+    result *= 2
+    return result
+
+
+def is_even(n):
+    """Check if a number is even."""
+    n = int(n)
+    remainder = n % 2
+    return remainder == 0
 
 
 def print_hi(name):
