@@ -24,21 +24,6 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           path: coverage_artifacts
 
-      - name: Debug - print workflow_run event payload
-        shell: bash
-        env:
-          WORKFLOW_RUN_EVENT: ${{ toJSON(github.event.workflow_run) }}
-        run: |
-          echo "=== workflow_run.event ==="
-          echo "${{ github.event.workflow_run.event }}"
-          echo "=== workflow_run.conclusion ==="
-          echo "${{ github.event.workflow_run.conclusion }}"
-          echo "=== workflow_run.head_branch ==="
-          echo "${{ github.event.workflow_run.head_branch }}"
-          echo "=== workflow_run.pull_requests (raw toJSON) ==="
-          echo "${WORKFLOW_RUN_EVENT}" | jq '.pull_requests' || echo "jq failed or pull_requests missing"
-          echo "=== full workflow_run payload ==="
-          echo "${WORKFLOW_RUN_EVENT}" | jq '{id: .id, event: .event, conclusion: .conclusion, pull_requests: .pull_requests}' || echo "jq failed"
 
       - name: Locate coverage file and get PR number
         id: pr
@@ -90,15 +75,6 @@ jobs:
             echo 'EOF'
           } >> "$GITHUB_ENV"
 
-      - name: Debug - verify diff_coverage.md exists
-        shell: bash
-        run: |
-          echo "=== diff_coverage.md content preview ==="
-          head -20 diff_coverage.md || echo "FILE NOT FOUND"
-          echo "=== REPORT_BODY env ==="
-          echo "${REPORT_BODY:-NOT SET}"
-          echo "=== PR Number from previous step ==="
-          echo "PR: ${{ steps.pr.outputs.number }}"
 
       - name: Post Comment to PR
         uses: thollander/actions-comment-pull-request@v3
