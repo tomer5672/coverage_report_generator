@@ -60,7 +60,7 @@ jobs:
         with:
           # Use the environment variable inside the dropdown tags
           message: |
-            ## 📊 Diff Coverage Report
+            ## 📊 Diff Coverage Report 2
             <details>
             <summary>📂 Click to view full coverage details</summary>
 
