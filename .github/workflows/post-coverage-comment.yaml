@@ -17,7 +17,7 @@ jobs:
       actions: read
     steps:
       - name: Download coverage artifact
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@2536c51d3d126276eb39f74d6bc9c72ac6ef30d3
         with:
           name: coverage-markdown-report
           workflow_conclusion: success
@@ -75,7 +75,7 @@ jobs:
           } > final_comment.md
 
       - name: Post Comment to PR
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b
         with:
           pr-number: ${{ steps.pr.outputs.number }}
           file-path: final_comment.md
