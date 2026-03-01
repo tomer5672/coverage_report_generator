@@ -1,52 +1,72 @@
-#name: Post Coverage Comment
-#
-#on:
-#  workflow_run:
-#    workflows: ["CI"]
-#    types:
-#      - completed
-#
-#jobs:
-#  comment:
-#    runs-on: ubuntu-latest
-#    if: >
-#      github.event.workflow_run.event == 'pull_request' &&
-#      github.event.workflow_run.conclusion == 'success'
-#    permissions:
-#      pull-requests: write
-#      actions: read
-#    steps:
-#      - name: Download coverage artifact
-#        uses: dawidd6/action-download-artifact@v3
-#        with:
-#          name: coverage-markdown-report
-#          workflow_conclusion: success
-#          run_id: ${{ github.event.workflow_run.id }}
-#
-#      - name: Move coverage file and get PR number
-#        id: pr
-#        run: |
-#          # Move the file to root
-#          if [ -f "tests/coverage_reports/diff_coverage.md" ]; then
-#            mv tests/coverage_reports/diff_coverage.md diff_coverage.md
-#          elif [ ! -f "diff_coverage.md" ]; then
-#            echo "Error: diff_coverage.md not found!"
-#            ls -R
-#            exit 1
-#          fi
-#
-#          # Extract PR number using jq
-#          PR_NUMBER=$(echo '${{ toJSON(github.event.workflow_run.pull_requests) }}' | jq -r '.[0].number')
-#          if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
-#            echo "Error: No PR number found"
-#            exit 1
-#          fi
-#          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
-#
-#      - name: Comment PR
-#        uses: marocchino/sticky-pull-request-comment@v2
-#        with:
-#          number: ${{ steps.pr.outputs.number }}
-#          header: coverage
-#          path: diff_coverage.md
-#
+name: Post Coverage Comment
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    permissions:
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Download coverage artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          name: coverage-markdown-report
+          workflow_conclusion: success
+          run_id: ${{ github.event.workflow_run.id }}
+
+      - name: Move coverage file and get PR number
+        id: pr
+        run: |
+          # Move the file to root
+          if [ -f "tests/coverage_reports/diff_coverage.md" ]; then
+            mv tests/coverage_reports/diff_coverage.md diff_coverage.md
+          elif [ ! -f "diff_coverage.md" ]; then
+            echo "Error: diff_coverage.md not found!"
+            ls -R
+            exit 1
+          fi
+
+          # Extract PR number using jq
+          PR_NUMBER=$(echo '${{ toJSON(github.event.workflow_run.pull_requests) }}' | jq -r '.[0].number')
+          if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
+            echo "Error: No PR number found"
+            exit 1
+          fi
+          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Read coverage report
+        id: read_report
+        if: github.event_name == 'pull_request'
+        run: |
+          # Read the file and escape it for GitHub Action outputs
+          {
+            echo 'REPORT_BODY<<EOF'
+            cat diff_coverage.md
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
+
+      - name: Post Comment to PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          # Use the environment variable inside the dropdown tags
+          message: |
+            ## 📊 Diff Coverage Report
+            <details>
+            <summary>📂 Click to view full coverage details</summary>
+
+            ${{ env.REPORT_BODY }}
+
+            </details>
+          comment-tag: coverage_report
+          mode: recreate
+
