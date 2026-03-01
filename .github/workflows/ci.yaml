@@ -45,7 +45,7 @@ jobs:
           COVERAGE_FILE=unit_test.coverage pytest --cov=. --cov-report=html --cov-report=term -v
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage_unit_tests_report_${{ github.run_id }}.coverage
           path: unit_test.coverage
@@ -102,32 +102,27 @@ jobs:
       - name: Add coverage to job summary
         if: github.event_name == 'pull_request'
         run: |
-          # 1. Start the Summary
-          echo "## 📊 Diff Coverage Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # 2. Open the details tag
-          echo "<details>" >> $GITHUB_STEP_SUMMARY
-          echo "<summary>📂 Click to see full coverage details</summary>" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # 3. Add the content (Ensure it's separated by newlines)
-          echo "$(cat tests/coverage_reports/diff_coverage.md)" >> $GITHUB_STEP_SUMMARY
-
-          # 4. Close the tag with a leading newline
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "</details>" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## 📊 Diff Coverage Report"
+            echo ""
+            echo "<details>"
+            echo "<summary>📂 Click to view full coverage details</summary>"
+            echo ""
+            cat tests/coverage_reports/diff_coverage.md
+            echo ""
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload markdown coverage report for PR comment
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-markdown-report
           path: tests/coverage_reports/diff_coverage.md
           retention-days: 5
 
       - name: Upload coverage diff HTML report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage_combined_diff_report_${{ matrix.python-version }}_${{ github.run_id }}.html
           path: tests/coverage_reports/combined_diff.html
