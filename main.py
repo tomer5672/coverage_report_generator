@@ -31,6 +31,9 @@ def special_sum(x,y):
     result *= 2
     return result
 
+def dev_function():
+    print("This function came from side branch")
+    print("this function is dummy and will not be tested")
 
 def is_even(n):
     """Check if a number is even."""
