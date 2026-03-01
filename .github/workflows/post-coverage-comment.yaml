@@ -22,32 +22,47 @@ jobs:
           name: coverage-markdown-report
           workflow_conclusion: success
           run_id: ${{ github.event.workflow_run.id }}
+          path: coverage_artifacts
 
-      - name: Move coverage file and get PR number
+      - name: Locate coverage file and get PR number
         id: pr
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0]['number'] }}
         run: |
-          # Move the file to root
-          if [ -f "tests/coverage_reports/diff_coverage.md" ]; then
-            mv tests/coverage_reports/diff_coverage.md diff_coverage.md
-          elif [ ! -f "diff_coverage.md" ]; then
-            echo "Error: diff_coverage.md not found!"
-            ls -R
+          set -euo pipefail
+
+          # Locate the markdown report (artifact layout can vary)
+          REPORT_PATH=""
+          if [ -f "coverage_artifacts/tests/coverage_reports/diff_coverage.md" ]; then
+            REPORT_PATH="coverage_artifacts/tests/coverage_reports/diff_coverage.md"
+          elif [ -f "coverage_artifacts/diff_coverage.md" ]; then
+            REPORT_PATH="coverage_artifacts/diff_coverage.md"
+          else
+            REPORT_PATH=$(find coverage_artifacts -maxdepth 5 -type f -name 'diff_coverage.md' -print -quit || true)
+          fi
+
+          if [ -z "${REPORT_PATH}" ] || [ ! -f "${REPORT_PATH}" ]; then
+            echo "Error: diff_coverage.md not found in downloaded artifact"
+            ls -R coverage_artifacts || true
             exit 1
           fi
 
-          # Extract PR number using jq
-          PR_NUMBER=$(echo '${{ toJSON(github.event.workflow_run.pull_requests) }}' | jq -r '.[0].number')
-          if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
-            echo "Error: No PR number found"
+          cp "${REPORT_PATH}" diff_coverage.md
+
+          # workflow_run payload includes pull_requests array; no jq needed.
+          if [ -z "${PR_NUMBER}" ] || [ "${PR_NUMBER}" = "null" ]; then
+            echo "Error: No PR number found in workflow_run payload"
             exit 1
           fi
-          echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+          echo "number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
 
       - name: Read coverage report
         id: read_report
-        if: github.event_name == 'pull_request'
+        shell: bash
         run: |
-          # Read the file and escape it for GitHub Action outputs
+          set -euo pipefail
           {
             echo 'REPORT_BODY<<EOF'
             cat diff_coverage.md
