@@ -102,7 +102,7 @@ jobs:
       - name: Add coverage to job summary
         if: github.event_name == 'pull_request'
         run: |
-                   {
+          {
             echo "## 📊 Diff Coverage Report"
             echo ""
             cat tests/coverage_reports/diff_coverage.md
