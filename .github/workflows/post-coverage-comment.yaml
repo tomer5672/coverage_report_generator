@@ -69,13 +69,22 @@ jobs:
             echo 'EOF'
           } >> "$GITHUB_ENV"
 
+      - name: Debug - verify diff_coverage.md exists
+        shell: bash
+        run: |
+          echo "=== diff_coverage.md content preview ==="
+          head -20 diff_coverage.md || echo "FILE NOT FOUND"
+          echo "=== REPORT_BODY env ==="
+          echo "${REPORT_BODY:-NOT SET}"
+          echo "=== PR Number from previous step ==="
+          echo "PR: ${{ steps.pr.outputs.number }}"
+
       - name: Post Comment to PR
-        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v3
         with:
-          # Use the environment variable inside the dropdown tags
+          pr-number: ${{ steps.pr.outputs.number }}
           message: |
-            ## 📊 Diff Coverage Report 2
+            ## 📊 Diff Coverage Report
             <details>
             <summary>📂 Click to view full coverage details</summary>
 
