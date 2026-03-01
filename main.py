@@ -6,21 +6,6 @@ def add_numbers(a, b):
     return a + b
 
 
-def power_numbers(a, b):
-    """Raise `a` to the power of `b`.
-
-    This function is intentionally small and side-effect free so it is easy to test.
-
-    Args:
-        a: The base number.
-        b: The exponent.
-
-    Returns:
-        a ** b
-    """
-    return a ** b
-
-
 def multiply_numbers(a, b):
     """Multiply two numbers together.
 
