@@ -34,7 +34,7 @@ jobs:
             ls -R
             exit 1
           fi
-          
+
           # Extract PR number using jq
           PR_NUMBER=$(echo '${{ toJSON(github.event.workflow_run.pull_requests) }}' | jq -r '.[0].number')
           if [ "$PR_NUMBER" = "null" ] || [ -z "$PR_NUMBER" ]; then
@@ -43,10 +43,30 @@ jobs:
           fi
           echo "number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
-      - name: Comment PR
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Read coverage report
+        id: read_report
+        if: github.event_name == 'pull_request'
+        run: |
+          # Read the file and escape it for GitHub Action outputs
+          {
+            echo 'REPORT_BODY<<EOF'
+            cat diff_coverage.md
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
+
+      - name: Post Comment to PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v3
         with:
-          number: ${{ steps.pr.outputs.number }}
-          header: coverage
-          path: diff_coverage.md
+          # Use the environment variable inside the dropdown tags
+          message: |
+            ## 📊 Diff Coverage Report 2
+            <details>
+            <summary>📂 Click to view full coverage details</summary>
+
+            ${{ env.REPORT_BODY }}
+
+            </details>
+          comment-tag: coverage_report
+          mode: recreate
 
