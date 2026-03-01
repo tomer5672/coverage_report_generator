@@ -24,11 +24,27 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           path: coverage_artifacts
 
+      - name: Debug - print workflow_run event payload
+        shell: bash
+        env:
+          WORKFLOW_RUN_EVENT: ${{ toJSON(github.event.workflow_run) }}
+        run: |
+          echo "=== workflow_run.event ==="
+          echo "${{ github.event.workflow_run.event }}"
+          echo "=== workflow_run.conclusion ==="
+          echo "${{ github.event.workflow_run.conclusion }}"
+          echo "=== workflow_run.head_branch ==="
+          echo "${{ github.event.workflow_run.head_branch }}"
+          echo "=== workflow_run.pull_requests (raw toJSON) ==="
+          echo "${WORKFLOW_RUN_EVENT}" | jq '.pull_requests' || echo "jq failed or pull_requests missing"
+          echo "=== full workflow_run payload ==="
+          echo "${WORKFLOW_RUN_EVENT}" | jq '{id: .id, event: .event, conclusion: .conclusion, pull_requests: .pull_requests}' || echo "jq failed"
+
       - name: Locate coverage file and get PR number
         id: pr
         shell: bash
         env:
-          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0]['number'] }}
+          PULL_REQUESTS_JSON: ${{ toJSON(github.event.workflow_run.pull_requests) }}
         run: |
           set -euo pipefail
 
@@ -50,12 +66,17 @@ jobs:
 
           cp "${REPORT_PATH}" diff_coverage.md
 
-          # workflow_run payload includes pull_requests array; no jq needed.
+          # Extract PR number via jq from the full pull_requests JSON array
+          echo "pull_requests JSON: ${PULL_REQUESTS_JSON}"
+          PR_NUMBER=$(echo "${PULL_REQUESTS_JSON}" | jq -r '.[0].number // empty')
+
           if [ -z "${PR_NUMBER}" ] || [ "${PR_NUMBER}" = "null" ]; then
             echo "Error: No PR number found in workflow_run payload"
+            echo "Full pull_requests payload: ${PULL_REQUESTS_JSON}"
             exit 1
           fi
 
+          echo "Found PR number: ${PR_NUMBER}"
           echo "number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
 
       - name: Read coverage report
