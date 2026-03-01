@@ -102,24 +102,24 @@ jobs:
             --html-report tests/coverage_reports/combined_diff.html \
             --markdown-report tests/coverage_reports/diff_coverage.md
 
-#      - name: Add coverage to job summary
-#        if: github.event_name == 'pull_request'
-#        run: |
-#          # 1. Start the Summary
-#          echo "## 📊 Diff Coverage Report" >> $GITHUB_STEP_SUMMARY
-#          echo "" >> $GITHUB_STEP_SUMMARY
-#
-#          # 2. Open the details tag
-#          echo "<details>" >> $GITHUB_STEP_SUMMARY
-#          echo "<summary>📂 Click to see full coverage details</summary>" >> $GITHUB_STEP_SUMMARY
-#          echo "" >> $GITHUB_STEP_SUMMARY
-#
-#          # 3. Add the content (Ensure it's separated by newlines)
-#          echo "$(cat tests/coverage_reports/diff_coverage.md)" >> $GITHUB_STEP_SUMMARY
-#
-#          # 4. Close the tag with a leading newline
-#          echo "" >> $GITHUB_STEP_SUMMARY
-#          echo "</details>" >> $GITHUB_STEP_SUMMARY
+      - name: Add coverage to job summary
+        if: github.event_name == 'pull_request'
+        run: |
+          # 1. Start the Summary
+          echo "## 📊 Diff Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # 2. Open the details tag
+          echo "<details>" >> $GITHUB_STEP_SUMMARY
+          echo "<summary>📂 Click to see full coverage details</summary>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # 3. Add the content (Ensure it's separated by newlines)
+          echo "$(cat tests/coverage_reports/diff_coverage.md)" >> $GITHUB_STEP_SUMMARY
+
+          # 4. Close the tag with a leading newline
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "</details>" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload markdown coverage report for PR comment
         if: github.event_name == 'pull_request'
@@ -135,30 +135,3 @@ jobs:
           name: coverage_combined_diff_report_${{ matrix.python-version }}_${{ github.run_id }}.html
           path: tests/coverage_reports/combined_diff.html
           retention-days: 30
-
-#      - name: Read coverage report
-#        id: read_report
-#        if: github.event_name == 'pull_request'
-#        run: |
-#          # Read the file and escape it for GitHub Action outputs
-#          {
-#            echo 'REPORT_BODY<<EOF'
-#            cat tests/coverage_reports/diff_coverage.md
-#            echo 'EOF'
-#          } >> "$GITHUB_ENV"
-#
-#      - name: Post Comment to PR
-#        if: github.event_name == 'pull_request'
-#        uses: thollander/actions-comment-pull-request@v3
-#        with:
-#          # Use the environment variable inside the dropdown tags
-#          message: |
-#            ## 📊 Diff Coverage Report
-#            <details>
-#            <summary>📂 Click to view full coverage details</summary>
-#
-#            ${{ env.REPORT_BODY }}
-#
-#            </details>
-#          comment-tag: coverage_report
-#          mode: recreate
