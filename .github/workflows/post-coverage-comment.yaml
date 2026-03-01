@@ -31,23 +31,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          REPORT_PATH=""
-          if [ -f "coverage_artifacts/tests/coverage_reports/diff_coverage.md" ]; then
-            REPORT_PATH="coverage_artifacts/tests/coverage_reports/diff_coverage.md"
-          elif [ -f "coverage_artifacts/diff_coverage.md" ]; then
-            REPORT_PATH="coverage_artifacts/diff_coverage.md"
-          else
-            REPORT_PATH=$(find coverage_artifacts -maxdepth 5 -type f -name 'diff_coverage.md' -print -quit || true)
-          fi
-
-          if [ -z "${REPORT_PATH}" ] || [ ! -f "${REPORT_PATH}" ]; then
-            echo "Error: diff_coverage.md not found in downloaded artifact"
+          if [ ! -f "coverage_artifacts/diff_coverage.md" ]; then
+            echo "Error: diff_coverage.md not found in coverage_artifacts/"
             ls -R coverage_artifacts || true
             exit 1
           fi
 
-          cp "${REPORT_PATH}" diff_coverage.md
-          echo "Found coverage file at: ${REPORT_PATH}"
+          cp coverage_artifacts/diff_coverage.md diff_coverage.md
+          echo "Found coverage file at: coverage_artifacts/diff_coverage.md"
 
       - name: Get PR number
         id: pr

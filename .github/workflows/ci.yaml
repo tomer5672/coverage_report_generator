@@ -58,9 +58,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
-    permissions:
-      contents: write    # Required to push to the gh-pages branch
-      pull-requests: write # If you are still posting comments
     steps:
       - uses: actions/checkout@v6
         with:

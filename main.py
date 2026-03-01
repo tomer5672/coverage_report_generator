@@ -30,8 +30,6 @@ def divide_numbers(a, b):
 #     result = x + y
 #     result *= 2
 #     return result
-#
-#
 
 def dev_function():
     print("This function came from side branch")
