@@ -25,15 +25,12 @@ jobs:
           path: coverage_artifacts
 
 
-      - name: Locate coverage file and get PR number
-        id: pr
+      - name: Locate coverage file
+        id: file
         shell: bash
-        env:
-          PULL_REQUESTS_JSON: ${{ toJSON(github.event.workflow_run.pull_requests) }}
         run: |
           set -euo pipefail
 
-          # Locate the markdown report (artifact layout can vary)
           REPORT_PATH=""
           if [ -f "coverage_artifacts/tests/coverage_reports/diff_coverage.md" ]; then
             REPORT_PATH="coverage_artifacts/tests/coverage_reports/diff_coverage.md"
@@ -50,9 +47,16 @@ jobs:
           fi
 
           cp "${REPORT_PATH}" diff_coverage.md
+          echo "Found coverage file at: ${REPORT_PATH}"
 
-          # Extract PR number via jq from the full pull_requests JSON array
-          echo "pull_requests JSON: ${PULL_REQUESTS_JSON}"
+      - name: Get PR number
+        id: pr
+        shell: bash
+        env:
+          PULL_REQUESTS_JSON: ${{ toJSON(github.event.workflow_run.pull_requests) }}
+        run: |
+          set -euo pipefail
+
           PR_NUMBER=$(echo "${PULL_REQUESTS_JSON}" | jq -r '.[0].number // empty')
 
           if [ -z "${PR_NUMBER}" ] || [ "${PR_NUMBER}" = "null" ]; then
