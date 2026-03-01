@@ -45,7 +45,7 @@ jobs:
           COVERAGE_FILE=unit_test.coverage pytest --cov=. --cov-report=html --cov-report=term -v
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage_unit_tests_report_${{ github.run_id }}.coverage
           path: unit_test.coverage
@@ -115,14 +115,14 @@ jobs:
 
       - name: Upload markdown coverage report for PR comment
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-markdown-report
           path: tests/coverage_reports/diff_coverage.md
           retention-days: 5
 
       - name: Upload coverage diff HTML report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage_combined_diff_report_${{ matrix.python-version }}_${{ github.run_id }}.html
           path: tests/coverage_reports/combined_diff.html
