@@ -40,6 +40,10 @@ jobs:
           cp coverage_artifacts/diff_coverage.md diff_coverage.md
           echo "Found coverage file at: coverage_artifacts/diff_coverage.md"
 
+      - name: Debug head SHA
+        run: |
+          echo "head_sha: ${{ github.event.workflow_run.head_sha }}"
+
       - name: Get PR number
         id: pr
         shell: bash
