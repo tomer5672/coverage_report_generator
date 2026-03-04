@@ -94,7 +94,6 @@ jobs:
           echo "Found PR number: $PR_NUMBER"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-
       - name: Build coverage comment file
         shell: bash
         run: |
