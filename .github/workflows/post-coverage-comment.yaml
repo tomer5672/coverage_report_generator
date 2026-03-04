@@ -68,18 +68,29 @@ jobs:
       - name: Get PR number
         id: pr
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Use jq to pull the PR number directly from the workflow_run payload
-          # This works for forks because GitHub links the 'CI' run to the Upstream PR
-          PR_NUMBER=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/pulls?head=${{ github.event.workflow_run.head_repository.full_name }}:${{ github.event.workflow_run.head_branch }}" \
-          | jq -r '.[0].number // empty')
-
+          set -euo pipefail
+          
+          # Define variables for readability
+          REPO="${{ github.repository }}"
+          HEAD_REPO="${{ github.event.workflow_run.head_repository.full_name }}"
+          HEAD_BRANCH="${{ github.event.workflow_run.head_branch }}"
+          
+          echo "Searching for PR from $HEAD_REPO:$HEAD_BRANCH in $REPO..."
+          
+          # Use the API to find the PR number
+          PR_NUMBER=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPO}/pulls?head=${HEAD_REPO}:${HEAD_BRANCH}" \
+            | jq -r '.[0].number // empty')
+          
           if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
             echo "::error::Could not find a PR number. Ensure the 'CI' workflow was triggered by a pull_request event."
             exit 1
           fi
-
+          
           echo "Found PR number: $PR_NUMBER"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
